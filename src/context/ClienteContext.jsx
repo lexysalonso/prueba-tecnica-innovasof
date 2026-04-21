@@ -74,13 +74,17 @@ export const ClienteProvider = ({ children }) => {
 
   const getClientes = async () => {
     dispatch({ type: 'SET_LOADING', payload: true });
+    let totalClientes = 0;
     try {
-      const response = await api.get('Clientes');
-      dispatch({ type: 'GET_CLIENTES', payload: response.data });
+      const usuarioId = state.userid || localStorage.getItem('userid') || '';
+      const response = await api.post('api/Cliente/Listado', { identificacion: '', nombre: '', usuarioId });
+      totalClientes = response.data?.length || 0;
+      localStorage.setItem('totalClientes', totalClientes.toString());
     } catch (error) {
-      const data = JSON.parse(localStorage.getItem('clientes') || '[]');
-      dispatch({ type: 'GET_CLIENTES', payload: data });
+      totalClientes = parseInt(localStorage.getItem('totalClientes') || '0', 10);
     }
+    localStorage.setItem('totalClientes', totalClientes.toString());
+    dispatch({ type: 'GET_CLIENTES', payload: [] });
   };
 
   const searchClientes = useCallback(async (identificacion = '', nombre = '') => {
@@ -166,17 +170,18 @@ export const ClienteProvider = ({ children }) => {
 
   const addCliente = async (cliente) => {
     dispatch({ type: 'SET_LOADING', payload: true });
+    let nuevoTotal = 0;
     try {
       const response = await api.post('Clientes', cliente);
       dispatch({ type: 'ADD_CLIENTE', payload: response.data });
+      nuevoTotal = parseInt(localStorage.getItem('totalClientes') || '0', 10) + 1;
+      localStorage.setItem('totalClientes', nuevoTotal.toString());
       return response.data;
     } catch (error) {
-      const newCliente = { ...cliente, id: Date.now() };
-      const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
-      clientes.push(newCliente);
-      localStorage.setItem('clientes', JSON.stringify(clientes));
-      dispatch({ type: 'ADD_CLIENTE', payload: newCliente });
-      return newCliente;
+      nuevoTotal = parseInt(localStorage.getItem('totalClientes') || '0', 10) + 1;
+      localStorage.setItem('totalClientes', nuevoTotal.toString());
+      dispatch({ type: 'ADD_CLIENTE', payload: null });
+      return null;
     }
   };
 
@@ -200,9 +205,12 @@ export const ClienteProvider = ({ children }) => {
 
   const deleteCliente = async (id) => {
     dispatch({ type: 'SET_LOADING', payload: true });
+    let nuevoTotal = 0;
     try {
       await api.delete(`api/Cliente/Eliminar/${id}`);
       dispatch({ type: 'DELETE_CLIENTE', payload: id });
+      nuevoTotal = parseInt(localStorage.getItem('totalClientes') || '0', 10) - 1;
+      localStorage.setItem('totalClientes', nuevoTotal.toString());
     } catch (error) {
       const errorMsg = 'Hubo un inconveniente con la transacción.';
       dispatch({ type: 'SET_ERROR', payload: errorMsg });
@@ -246,6 +254,15 @@ export const ClienteProvider = ({ children }) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     try {
       const response = await api.post('api/Authenticate/register', { username, email, password });
+      if (response.data?.status === 'Success') {
+        const loginRes = await api.post('api/Authenticate/login', { username, password });
+        const { token, userid, username: userName } = loginRes.data;
+        localStorage.setItem('token', token);
+        localStorage.setItem('userid', userid);
+        localStorage.setItem('username', userName);
+        dispatch({ type: 'SET_USUARIO', payload: { usuario: { username: userName }, isAuthenticated: true, token, userid } });
+        return { success: true, data: response.data };
+      }
       return { success: true, data: response.data };
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Error en el registro';
@@ -258,7 +275,7 @@ export const ClienteProvider = ({ children }) => {
     localStorage.removeItem('token');
     localStorage.removeItem('userid');
     localStorage.removeItem('username');
-    localStorage.removeItem('rememberedUsername');
+    localStorage.removeItem('totalClientes');
     dispatch({ type: 'LOGOUT' });
   };
 

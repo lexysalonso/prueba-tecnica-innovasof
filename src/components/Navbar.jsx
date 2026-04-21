@@ -1,14 +1,18 @@
-import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, Avatar, Divider } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemButton, ListItemText, useMediaQuery, Avatar, Divider, Tooltip } from '@mui/material';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import PersonIcon from '@mui/icons-material/Person';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { useCliente } from '../context/ClienteContext';
+import { useThemeContext } from '../context/ThemeContext';
 import { useState } from 'react';
 
 const Navbar = ({ children }) => {
   const { usuario, logout, isAuthenticated } = useCliente();
+  const { mode, toggleTheme } = useThemeContext();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -38,7 +42,7 @@ const Navbar = ({ children }) => {
 
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: '#1a237e' }}>
+      <AppBar position="static" sx={{ bgcolor: 'primary.main' }}>
         <Toolbar>
           <IconButton color="inherit" edge="start" onClick={() => setDrawerOpen(true)} sx={{ mr: 2 }}>
             <MenuIcon />
@@ -55,17 +59,55 @@ const Navbar = ({ children }) => {
             <Typography variant="body2">
               {displayUsername}
             </Typography>
-            <IconButton color="inherit" onClick={handleLogout}>
-              <ExitToAppIcon />
-            </IconButton>
+            <Tooltip title={mode === 'light' ? 'Modo Oscuro' : 'Modo Claro'}>
+              <Box
+                onClick={toggleTheme}
+                sx={{
+                  bgcolor: mode === 'light' ? '#e0e0e0' : '#424242',
+                  borderRadius: '50%',
+                  width: 36,
+                  height: 36,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: mode === 'light' ? '#bdbdbd' : '#616161' },
+                }}
+              >
+                {mode === 'light' ? <DarkModeIcon sx={{ color: '#616161', fontSize: 20 }} /> : <LightModeIcon sx={{ color: '#ffeb3b', fontSize: 20 }} />}
+              </Box>
+            </Tooltip>
+            <Tooltip title="Cerrar Sesión">
+              <Box
+                onClick={handleLogout}
+                sx={{
+                  bgcolor: mode === 'light' ? '#e0e0e0' : '#424242',
+                  borderRadius: '50%',
+                  width: 36,
+                  height: 36,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  '&:hover': { bgcolor: mode === 'light' ? '#bdbdbd' : '#616161' },
+                }}
+              >
+                <ExitToAppIcon sx={{ color: mode === 'light' ? '#616161' : '#e0e0e0', fontSize: 20 }} />
+              </Box>
+            </Tooltip>
           </Box>
         </Toolbar>
       </AppBar>
 
-      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <Box sx={{ width: 260, pt: 2, minWidth: 260 }}>
+      <Drawer 
+          anchor="left" 
+          open={drawerOpen} 
+          onClose={() => setDrawerOpen(false)}
+          slotProps={{ paper: { sx: { bgcolor: 'background.paper' } } }}
+        >
+        <Box sx={{ width: 260, pt: 2, minWidth: 260, bgcolor: 'background.paper', height: '100%' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 2 }}>
-            <Avatar sx={{ width: 60, height: 60, bgcolor: '#1a237e' }}>
+            <Avatar sx={{ width: 60, height: 60, bgcolor: 'primary.main' }}>
               <PersonIcon sx={{ fontSize: 35 }} />
             </Avatar>
             <Typography variant="body1" sx={{ mt: 1, fontWeight: 'medium' }}>
@@ -81,8 +123,7 @@ const Navbar = ({ children }) => {
           <Divider />
 <List>
               {menuItems.map((item) => (
-                <ListItem 
-                  button 
+                <ListItemButton
                   key={item.titulo} 
                   onClick={() => handleNavigate(item.ruta)}
                   selected={location.pathname === item.ruta}
@@ -90,34 +131,28 @@ const Navbar = ({ children }) => {
                     cursor: 'pointer',
                     height: 'auto',
                     py: 1.5,
-                    '&.Mui-selected': { bgcolor: '#e8eaf6' }
+                    '&.Mui-selected': { bgcolor: mode === 'light' ? '#e8eaf6' : '#3f51b5' }
                   }}
                 >
-                  <Box sx={{ width: 28, textAlign: 'center', mr: 1, color: '#90caf9', flexShrink: 0 }}>
+                  <Box sx={{ width: 28, textAlign: 'center', mr: 1, color: mode === 'light' ? '#90caf9' : '#90caf9', flexShrink: 0 }}>
                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                       {item.titulo}
                     </Typography>
                   </Box>
                   <ListItemText 
-                    primary={item.subtexto} 
-                    primaryTypographyProps={{ 
-                      fontWeight: 'bold',
-                      textAlign: 'left',
-                      noWrap: false,
-                      fontSize: '0.875rem'
-                    }} 
+                    primary={item.subtexto}
                   />
-                </ListItem>
+</ListItemButton>
               ))}
             </List>
         </Box>
       </Drawer>
 
       {!isMobile && (
-        <Box sx={{ display: 'flex', bgcolor: '#f5f5f5', minHeight: '100vh' }}>
-          <Box sx={{ width: 260, bgcolor: 'white', p: 2, minWidth: 260 }}>
+        <Box sx={{ display: 'flex', bgcolor: 'background.default', minHeight: '100vh' }}>
+          <Box sx={{ width: 260, bgcolor: 'background.paper', p: 2, minWidth: 260 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', py: 2 }}>
-              <Avatar sx={{ width: 60, height: 60, bgcolor: '#1a237e' }}>
+              <Avatar sx={{ width: 60, height: 60, bgcolor: 'primary.main' }}>
                 <PersonIcon sx={{ fontSize: 35 }} />
               </Avatar>
               <Typography variant="body1" sx={{ mt: 1, fontWeight: 'medium' }}>
@@ -133,8 +168,7 @@ const Navbar = ({ children }) => {
             <Divider />
             <List disablePadding>
               {menuItems.map((item) => (
-                <ListItem 
-                  button 
+                <ListItemButton
                   key={item.titulo} 
                   onClick={() => navigate(item.ruta)}
                   selected={location.pathname === item.ruta}
@@ -143,35 +177,29 @@ const Navbar = ({ children }) => {
                     cursor: 'pointer',
                     height: 'auto',
                     py: 1.5,
-                    '&.Mui-selected': { bgcolor: '#e8eaf6' }
+                    '&.Mui-selected': { bgcolor: mode === 'light' ? '#e8eaf6' : '#3f51b5' }
                   }}
                 >
-                  <Box sx={{ width: 28, textAlign: 'center', mr: 1, color: '#90caf9', flexShrink: 0 }}>
+                  <Box sx={{ width: 28, textAlign: 'center', mr: 1, color: mode === 'light' ? '#90caf9' : '#90caf9', flexShrink: 0 }}>
                     <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
                       {item.titulo}
                     </Typography>
                   </Box>
                   <ListItemText 
-                    primary={item.subtexto} 
-                    primaryTypographyProps={{ 
-                      fontWeight: 'bold',
-                      textAlign: 'left',
-                      noWrap: false,
-                      fontSize: '0.875rem'
-                    }} 
+                    primary={item.subtexto}
                   />
-                </ListItem>
+                </ListItemButton>
               ))}
             </List>
           </Box>
-          <Box sx={{ flexGrow: 1, p: 3 }}>
+          <Box sx={{ flexGrow: 1, p: 3, bgcolor: 'background.default' }}>
             {children}
           </Box>
         </Box>
       )}
 
       {isMobile && (
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: 2, bgcolor: 'background.default', minHeight: '100vh' }}>
           {children}
         </Box>
       )}

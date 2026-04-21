@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import Login from './pages/Login';
 import Registro from './pages/Registro';
 import Error404 from './pages/Error404';
@@ -9,7 +9,7 @@ import MantenimientoClientes from './pages/MantenimientoClientes';
 import DetalleCliente from './pages/DetalleCliente';
 import Navbar from './components/Navbar';
 import { ClienteProvider, useCliente } from './context/ClienteContext';
-import theme from './theme';
+import { ThemeProvider as ThemeContextProvider } from './context/ThemeContext';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, authInitialized } = useCliente();
@@ -23,8 +23,7 @@ const AppLayout = ({ children }) => {
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <ThemeContextProvider>
       <ClienteProvider>
         <BrowserRouter>
           <Routes>
@@ -39,7 +38,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </ClienteProvider>
-    </ThemeProvider>
+    </ThemeContextProvider>
   );
 }
 

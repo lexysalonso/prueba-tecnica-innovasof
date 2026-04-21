@@ -11,8 +11,12 @@ import {
   Link,
   FormControlLabel,
   Checkbox,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useCliente } from '../context/ClienteContext';
 
 const Login = () => {
@@ -20,6 +24,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { login, isAuthenticated } = useCliente();
   const navigate = useNavigate();
 
@@ -59,6 +64,16 @@ const Login = () => {
     }
   };
 
+  const handleRememberMeChange = (e) => {
+    const checked = e.target.checked;
+    setRememberMe(checked);
+    if (checked && username) {
+      localStorage.setItem('rememberedUsername', username);
+    } else {
+      localStorage.removeItem('rememberedUsername');
+    }
+  };
+
   return (
     <Container maxWidth="xs" sx={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <Paper elevation={6} sx={{ p: 4, width: '100%', textAlign: 'center' }}>
@@ -89,16 +104,27 @@ const Login = () => {
             <TextField
               fullWidth
               label="Contraseña *"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               margin="normal"
+              slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
             />
             <FormControlLabel
               control={
                 <Checkbox
                   checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
+                  onChange={handleRememberMeChange}
                   sx={{ '&.Mui-checked': { color: '#1a237e' } }}
                 />
               }

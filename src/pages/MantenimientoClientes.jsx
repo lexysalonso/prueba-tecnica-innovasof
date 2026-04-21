@@ -17,6 +17,7 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useCliente } from '../context/ClienteContext';
+import { useThemeContext } from '../context/ThemeContext';
 import axios from 'axios';
 
 const initialForm = {
@@ -38,6 +39,7 @@ const API_URL = 'https://pruebareactjs.test-class.com/Api/';
 
 const MantenimientoClientes = () => {
   const { isAuthenticated, authInitialized, userid } = useCliente();
+  const { mode } = useThemeContext();
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
@@ -282,24 +284,19 @@ const MantenimientoClientes = () => {
                 </Avatar>
               </label>
             </Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', color: mode === 'dark' ? 'white' : 'primary.main' }}>
               {isEditing ? 'Editar Cliente' : 'Mantenimiento de Clientes'}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <Button
-              variant="outlined"
+              variant="contained"
               startIcon={<ArrowBackIcon />}
               onClick={() => navigate('/consulta')}
+              sx={{ bgcolor: '#1a237e' }}
             >
               Regresar
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => navigate('/consulta')}
-            >
-              Cancelar
             </Button>
             <Button
               type="submit"
@@ -326,7 +323,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.identificacion}
                 helperText={errors.identificacion}
-                inputProps={{ maxLength: 20 }}
+                slotProps={{ input: { maxLength: 20 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -338,7 +335,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.nombre}
                 helperText={errors.nombre}
-                inputProps={{ maxLength: 50 }}
+                slotProps={{ input: { maxLength: 50 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -350,7 +347,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.apellidos}
                 helperText={errors.apellidos}
-                inputProps={{ maxLength: 100 }}
+                slotProps={{ input: { maxLength: 100 } }}
               />
             </Grid>
 
@@ -380,7 +377,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.fNacimiento}
                 helperText={errors.fNacimiento}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{ inputLabel: { shrink: true } }}
                 sx={{
                   '& input[type="date"]::-webkit-datetime-edit': {
                     color: formData.fNacimiento ? 'inherit' : 'transparent',
@@ -401,7 +398,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.fAfiliacion}
                 helperText={errors.fAfiliacion}
-                InputLabelProps={{ shrink: true }}
+                slotProps={{ inputLabel: { shrink: true } }}
                 sx={{
                   '& input[type="date"]::-webkit-datetime-edit': {
                     color: formData.fAfiliacion ? 'inherit' : 'transparent',
@@ -423,7 +420,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.telefonoCelular}
                 helperText={errors.telefonoCelular}
-                inputProps={{ maxLength: 20 }}
+                slotProps={{ input: { maxLength: 20 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -435,7 +432,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.otroTelefono}
                 helperText={errors.otroTelefono}
-                inputProps={{ maxLength: 20 }}
+                slotProps={{ input: { maxLength: 20 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 4 }}>
@@ -468,7 +465,7 @@ const MantenimientoClientes = () => {
                 onChange={handleChange}
                 error={!!errors.direccion}
                 helperText={errors.direccion}
-                inputProps={{ maxLength: 200 }}
+                slotProps={{ input: { maxLength: 200 } }}
               />
             </Grid>
 
@@ -484,7 +481,7 @@ const MantenimientoClientes = () => {
                 helperText={errors.resenaPersonal}
                 multiline
                 rows={4}
-                inputProps={{ maxLength: 200 }}
+                slotProps={{ input: { maxLength: 200 } }}
               />
             </Grid>
 

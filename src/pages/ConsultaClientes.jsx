@@ -1,29 +1,31 @@
 import { useState, useEffect } from 'react';
 import {
   Container,
-  Typography,
+  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  IconButton,
   Button,
   TextField,
+  IconButton,
   Box,
-  Snackbar,
   Alert,
-  Avatar,
+  Tooltip,
+  Typography,
   Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
   DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  Snackbar,
   Pagination,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useThemeContext } from '../context/ThemeContext';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
@@ -33,6 +35,8 @@ import { useCliente } from '../context/ClienteContext';
 
 const ConsultaClientes = () => {
   const { clientes, deleteCliente, searchClientes, isAuthenticated, authInitialized, loading } = useCliente();
+  const { mode } = useThemeContext();
+  const navigate = useNavigate();
   const [identificacion, setIdentificacion] = useState('');
   const [nombre, setNombre] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -42,7 +46,6 @@ const ConsultaClientes = () => {
   const [clienteToDelete, setClienteToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!authInitialized) return;
@@ -124,13 +127,14 @@ const ConsultaClientes = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4, bgcolor: 'inherit' }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', md: 'center' }, mb: 3, gap: { xs: 2, md: 0 } }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: mode === 'dark' ? 'white' : '#1a237e' }}>
           Consulta de Clientes
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexDirection: { xs: 'column', sm: 'row' }, width: { xs: '100%', sm: 'auto' } }}>
           <Button
+            fullWidth
             variant="contained"
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate('/home')}
@@ -139,6 +143,7 @@ const ConsultaClientes = () => {
             Regresar
           </Button>
           <Button
+            fullWidth
             variant="contained"
             startIcon={<AddIcon />}
             onClick={() => navigate('/mantenimiento')}
@@ -170,14 +175,18 @@ const ConsultaClientes = () => {
             onKeyDown={handleSearchOnEnter}
             sx={{ flex: 1 }}
           />
-          <IconButton
-            color="primary"
-            onClick={handleSearch}
-            disabled={loading}
-            sx={{ bgcolor: '#1a237e', color: 'white', borderRadius: '50%', width: 56, height: 56 }}
-          >
-            <SearchIcon />
-          </IconButton>
+          <Tooltip title="Buscar">
+            <span>
+              <IconButton
+                color="primary"
+                onClick={handleSearch}
+                disabled={loading}
+                sx={{ bgcolor: '#1a237e', color: 'white', borderRadius: '50%', width: 56, height: 56 }}
+              >
+                <SearchIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
         </Box>
       </Paper>
 
@@ -191,7 +200,13 @@ const ConsultaClientes = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedClientes.length === 0 ? (
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={3} align="center" sx={{ py: 5 }}>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            ) : displayedClientes.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={3} align="center">
                   <Typography variant="body1" color="text.secondary">
@@ -205,20 +220,22 @@ const ConsultaClientes = () => {
                   <TableCell>{cliente.identificacion}</TableCell>
                   <TableCell>{cliente.nombre} {cliente.apellidos}</TableCell>
                   <TableCell align="center">
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEditar(cliente)}
-                      title="Editar"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDeleteClick(cliente)}
-                      title="Eliminar"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <Tooltip title="Editar">
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditar(cliente)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Eliminar">
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDeleteClick(cliente)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))
@@ -245,18 +262,25 @@ const ConsultaClientes = () => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">
-          {"Confirmar Eliminación"}
+        <DialogTitle id="alert-dialog-title" sx={{ fontWeight: 'bold', color: '#d32f2f' }}>
+          Confirmar Eliminación
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            ¿Está seguro de que desea eliminar al cliente {clienteToDelete?.nombre} {clienteToDelete?.apellidos}?
+          <DialogContentText id="alert-dialog-description" sx={{ color: 'text.primary' }}>
+            ¿Está seguro de que desea eliminar al cliente{' '}
+            <Typography component="span" sx={{ fontWeight: 'bold' }}>
+              {clienteToDelete?.nombre} {clienteToDelete?.apellidos}
+            </Typography>
+            ?
+            <br />
             Esta acción no se puede deshacer.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDeleteCancel}>Cancelar</Button>
-          <Button onClick={handleDeleteConfirm} color="error" autoFocus>
+          <Button variant="contained" onClick={handleDeleteCancel} sx={{ bgcolor: '#9e9e9e' }}>
+            Cancelar
+          </Button>
+          <Button variant="contained" onClick={handleDeleteConfirm} color="error" autoFocus>
             Eliminar
           </Button>
         </DialogActions>

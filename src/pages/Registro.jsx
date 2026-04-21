@@ -10,8 +10,12 @@ import {
   Alert,
   Link,
   Stack,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useCliente } from '../context/ClienteContext';
 
 const Registro = () => {
@@ -22,6 +26,7 @@ const Registro = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { registro } = useCliente();
   const navigate = useNavigate();
 
@@ -48,7 +53,8 @@ const Registro = () => {
   };
 
   const validateEmail = (email) => {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
   };
 
   const handleSubmit = async (e) => {
@@ -84,7 +90,7 @@ const Registro = () => {
     const result = await registro(formData.username, formData.email, formData.password);
     if (result.success) {
       setSuccess(true);
-      setTimeout(() => navigate('/'), 2000);
+      setTimeout(() => navigate('/home'), 2000);
     } else {
       setError(result.error);
     }
@@ -125,7 +131,7 @@ const Registro = () => {
               <TextField
                 fullWidth
                 label="Dirección de Correo *"
-                type="email"
+                type="text"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -133,11 +139,22 @@ const Registro = () => {
               <TextField
                 fullWidth
                 label="Contraseña *"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 helperText="8-20 caracteres, número, mayúscula y minúscula"
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton size="small" onClick={() => setShowPassword(!showPassword)} edge="end">
+                          {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
               <Button
                 type="submit"

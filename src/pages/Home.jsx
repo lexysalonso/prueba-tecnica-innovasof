@@ -6,16 +6,16 @@ import {
   Box,
   Grid,
   Paper,
-  Button,
 } from '@mui/material';
-import PeopleIcon from '@mui/icons-material/People';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { useCliente } from '../context/ClienteContext';
+import { useThemeContext } from '../context/ThemeContext';
 
 const Home = () => {
   const { usuario, isAuthenticated, authInitialized, clientes, getClientes } = useCliente();
+  const { mode } = useThemeContext();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,49 +49,31 @@ const Home = () => {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1a237e' }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', color: mode === 'dark' ? 'white' : '#1a237e' }}>
             Bienvenido
           </Typography>
         </Box>
       </Box>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} md={4}>
+        <Grid xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 3, display: 'flex', alignItems: 'center', bgcolor: '#1a237e', color: 'white' }}>
             <DashboardIcon sx={{ fontSize: 50, mr: 2 }} />
             <Box>
-              <Typography variant="h3">{clientes?.length}</Typography>
+              <Typography variant="h3">{localStorage.getItem('totalClientes') || 0}</Typography>
               <Typography variant="body2">Total Clientes</Typography>
             </Box>
           </Paper>
         </Grid>
-        {/* <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 3, display: 'flex', alignItems: 'center', bgcolor: '#534bae', color: 'white' }}>
-            <PeopleIcon sx={{ fontSize: 50, mr: 2 }} />
-            <Box>
-              <Typography variant="h3">{clientes.filter(c => c.estado === 'Activo').length}</Typography>
-              <Typography variant="body2">Clientes Activos</Typography>
-            </Box>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={4}>
-          <Paper elevation={3} sx={{ p: 3, display: 'flex', alignItems: 'center', bgcolor: '#7c4dff', color: 'white' }}>
-            <PersonAddIcon sx={{ fontSize: 50, mr: 2 }} />
-            <Box>
-              <Typography variant="h3">{clientes.filter(c => c.estado === 'Prospecto').length}</Typography>
-              <Typography variant="body2">Prospectos</Typography>
-            </Box>
-          </Paper>
-        </Grid> */}
       </Grid>
 
-      <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold', color: '#1a237e' }}>
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold', color: mode === 'dark' ? 'white' : '#1a237e' }}>
         Menú Principal
       </Typography>
 
       <Grid container spacing={3}>
         {menuItems.map((item, index) => (
-          <Grid item xs={12} sm={6} key={index}>
+          <Grid xs={12} sm={6} key={index}>
             <Paper
               elevation={3}
               sx={{
@@ -107,7 +89,7 @@ const Home = () => {
                   {item.icono}
                 </Box>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: mode === 'dark' ? 'white' : 'inherit' }}>
                     {item.titulo}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">

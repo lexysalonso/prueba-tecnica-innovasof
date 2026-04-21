@@ -72,70 +72,70 @@ const DetalleCliente = () => {
         <Divider sx={{ mb: 3 }} />
 
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Nombre</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.nombre} {cliente.apellidos}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Identificación</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.identificacion}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Email</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.email}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Teléfono Celular</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.telefonoCelular}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Teléfono Otros</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.telefonoOtros || 'N/A'}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Dirección</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.direccion}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Fecha de Nacimiento</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.fechaNacimiento ? new Date(cliente.fechaNacimiento).toLocaleDateString() : 'N/A'}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Fecha de Afiliación</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.fechaAfiliacion ? new Date(cliente.fechaAfiliacion).toLocaleDateString() : 'N/A'}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Sexo</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.sexo}
             </Typography>
           </Grid>
 
-          <Grid item xs={12} md={6}>
+          <Grid xs={12} md={6}>
             <Typography variant="subtitle2" color="text.secondary">Estado</Typography>
             <Box sx={{ mb: 2 }}>
               <Chip 
@@ -145,14 +145,14 @@ const DetalleCliente = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Typography variant="subtitle2" color="text.secondary">Empresa</Typography>
             <Typography variant="body1" sx={{ mb: 2 }}>
               {cliente.empresa || 'N/A'}
             </Typography>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Typography variant="subtitle2" color="text.secondary">Intereses</Typography>
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
               {cliente.intereses?.map((interes, index) => (
@@ -161,7 +161,7 @@ const DetalleCliente = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Typography variant="subtitle2" color="text.secondary">Reseña Personal</Typography>
             <Typography variant="body1">
               {cliente.resenaPersonal || 'N/A'}
